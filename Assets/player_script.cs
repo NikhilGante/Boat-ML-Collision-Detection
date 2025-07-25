@@ -9,10 +9,10 @@ public class player_script : MonoBehaviour
     [SerializeField] Transform cameraTransform;
 
     // For random movement when not in manual control mode
-    const float directionChangeInterval = 5f;    // How often to change direction in seconds
+    [SerializeField] float directionChangeInterval = 5f;    // How often to change direction in seconds
     [SerializeField] float lookVerticalBound = 10f;    // How far up/down to look in random movement mode
 
-    float timeSinceChange = directionChangeInterval;    // Timer for changing direction, initialized to the interval to trigger change upon first update   
+    float timeSinceChange = 0f;    // Timer for changing direction
     Vector2 currentMoveDir;
     Vector2 currentLookDelta;
     Vector2 currentLookTarget;
@@ -25,6 +25,7 @@ public class player_script : MonoBehaviour
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+        timeSinceChange = directionChangeInterval;    // Initialize the timer to trigger a change upon first update   
     }
 
     void Awake()    // Awake is called when the script instance is being loaded
@@ -43,16 +44,22 @@ public class player_script : MonoBehaviour
         timeSinceChange += Time.deltaTime;
         if (timeSinceChange >= directionChangeInterval)
         {
+            Debug.Log("***New Target!");    // Log the vertical look value for debugging
+
             currentMoveDir = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
             //currentLookDelta = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
 
             // Fixed vertical look (target) to a random value within bounds
-            currentLookTarget = new Vector2(Random.Range(-360f, 360f), Random.Range(-lookVerticalBound, lookVerticalBound));
+            currentLookTarget = new Vector2(look.x + Random.Range(-180f, 180f), Random.Range(-lookVerticalBound, lookVerticalBound));
+            Vector2 minlookChangeRate = new Vector2(currentLookTarget.x - look.x, currentLookTarget.y - look.y) / (directionChangeInterval / Time.deltaTime);
+            //minlookChangeRate.x = (currentLookTarget.x - look.x) / (directionChangeInterval / Time.deltaTime);
+            //minlookChangeRate.y = (currentLookTarget.y - look.y) / (directionChangeInterval / Time.deltaTime);
 
-            float minlookYChangeRate = (currentLookTarget.y - look.y) / (directionChangeInterval / Time.deltaTime);
             //currentLookDelta = new Vector2(Random.Range(-1f, 1f), Random.Range(minlookYChangeRate, 2f * minlookYChangeRate));
-            currentLookDelta = new Vector2(Random.Range(-0.3f, 0.3f), minlookYChangeRate);
+            //currentLookDelta = new Vector2(Random.Range(-0.3f, 0.3f), minlookYChangeRate);
 
+            // look delta is a random value within the range of minlookChangeRate to 2x the rate so the player moves straight for some time
+            currentLookDelta = new Vector2(Random.Range(1f, 2f) * minlookChangeRate.x, Random.Range(1f, 2f) * minlookChangeRate.y);
             timeSinceChange = 0f;
         }
 #endif
@@ -77,8 +84,11 @@ public class player_script : MonoBehaviour
 #else
         // For random movement, we set the vertical look to a fixed value
         //look.y = delta.y;    // Clamp vertical look (in this case for testing purposes)
+        look.x = Mathf.Clamp(look.x, -currentLookTarget.x, currentLookTarget.x);    // Clamp vertical look to prevent flipping
         look.y = Mathf.Clamp(look.y, -currentLookTarget.y, currentLookTarget.y);    // Clamp vertical look to prevent flipping
-        Debug.Log($"Look X: {look.x}, Y: {look.y}, target: {currentLookTarget.y}");    // Log the vertical look value for debugging
+        //look.x = Mathf.MoveTowards(look.x, currentLookTarget.x, Mathf.Abs(currentLookDelta.x));
+        //look.y = Mathf.MoveTowards(look.y, currentLookTarget.y, Mathf.Abs(currentLookDelta.y));
+        Debug.Log($"Look X: {look.x}, Y: {look.y}, target: {currentLookTarget}, time: {timeSinceChange}");    // Log the vertical look value for debugging
 #endif
 
         cameraTransform.localRotation = Quaternion.Euler(-look.y, 0f, 0f);

@@ -1,4 +1,4 @@
-#define MANUAL_CONTROL
+//#define MANUAL_CONTROL
 using UnityEngine;
 
 public class player_script : MonoBehaviour
@@ -20,6 +20,10 @@ public class player_script : MonoBehaviour
     CharacterController controller;
     Vector3 zVel;
     Vector2 look;
+
+    // Constants
+    Vector3 lakeCentre = new Vector3(490f, 0f, 490f);
+    [SerializeField] float lakeRadius = 150f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -44,21 +48,16 @@ public class player_script : MonoBehaviour
         timeSinceChange += Time.deltaTime;
         if (timeSinceChange >= directionChangeInterval)
         {
-            Debug.Log("***New Target!");    // Log the vertical look value for debugging
-
             currentMoveDir = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
-            //currentLookDelta = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
 
             // Fixed vertical look (target) to a random value within bounds
             currentLookTarget = new Vector2(look.x + Random.Range(-180f, 180f), Random.Range(-lookVerticalBound, lookVerticalBound));
-            Vector2 minlookChangeRate = new Vector2(currentLookTarget.x - look.x, currentLookTarget.y - look.y) / (directionChangeInterval / Time.deltaTime);
-            //minlookChangeRate.x = (currentLookTarget.x - look.x) / (directionChangeInterval / Time.deltaTime);
-            //minlookChangeRate.y = (currentLookTarget.y - look.y) / (directionChangeInterval / Time.deltaTime);
 
-            //currentLookDelta = new Vector2(Random.Range(-1f, 1f), Random.Range(minlookYChangeRate, 2f * minlookYChangeRate));
-            //currentLookDelta = new Vector2(Random.Range(-0.3f, 0.3f), minlookYChangeRate);
-
-            // look delta is a random value within the range of minlookChangeRate to 2x the rate so the player moves straight for some time
+            // Calculate the minimum change rate based on the target and time interval
+            Vector2 minlookChangeRate = new Vector2(currentLookTarget.x - look.x, currentLookTarget.y - look.y);
+            minlookChangeRate *= Time.deltaTime / directionChangeInterval;    
+            
+            // Look delta is a rand value within the range of minlookChangeRate to 2x the rate so the player moves straight for some time
             currentLookDelta = new Vector2(Random.Range(1f, 2f) * minlookChangeRate.x, Random.Range(1f, 2f) * minlookChangeRate.y);
             timeSinceChange = 0f;
         }
@@ -83,7 +82,7 @@ public class player_script : MonoBehaviour
 #else
         look.x = Mathf.MoveTowards(look.x, currentLookTarget.x, Mathf.Abs(currentLookDelta.x));
         look.y = Mathf.MoveTowards(look.y, currentLookTarget.y, Mathf.Abs(currentLookDelta.y));
-        Debug.Log($"Look X: {look.x}, Y: {look.y}, target: {currentLookTarget}, time: {timeSinceChange}");    // Log the vertical look value for debugging
+        //Debug.Log($"Look X: {look.x}, Y: {look.y}, target: {currentLookTarget}, time: {timeSinceChange}");    // Log the vertical look value for debugging
 #endif
 
         cameraTransform.localRotation = Quaternion.Euler(-look.y, 0f, 0f);
@@ -93,6 +92,18 @@ public class player_script : MonoBehaviour
     {
         var input = transform.right * moveInput.x + transform.forward * moveInput.y;
         input.Normalize();
+
+        float distFromCentre = Vector3.Distance(transform.position, lakeCentre);
+        if(distFromCentre > lakeRadius) // If outside the lake radius, move towards the lake centre
+        {
+            Debug.Log($"Hit radius! time: {timeSinceChange}");    // Log the vertical look value for debugging
+
+            Vector3 directionToLakeCentre = (lakeCentre - transform.position).normalized;
+            //input = directionToLakeCentre * moveInput.magnitude; // Adjust input to move towards the lake centre
+            // Smoothly adjust the input towards the lake centre
+            input = Vector3.Lerp(input, directionToLakeCentre * moveInput.magnitude, 0.5f);
+
+        }
         controller.Move((input * movementSpeed + zVel) * Time.deltaTime);
     }
 }

@@ -8,6 +8,14 @@ public class player_script : MonoBehaviour
     [SerializeField] float mass = 1f;
     [SerializeField] Transform cameraTransform;
 
+    // For random movement when not in manual control mode
+    [SerializeField] float directionChangeInterval = 2f;    // How often to change direction in seconds
+    [SerializeField] float lookVerticalBound = 15f;    // How far up/down to look in random movement mode
+
+    float timeSinceChange = 0f;
+    Vector2 currentMoveDir;
+    Vector2 currentLookDelta;
+
     CharacterController controller;
     Vector3 zVel;
     Vector2 look;
@@ -26,76 +34,52 @@ public class player_script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        updateLook();
-        updateMovement();
+#if MANUAL_CONTROL
+        currentMoveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        currentLookDelta = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+
+#else
+        timeSinceChange += Time.deltaTime;
+        if (timeSinceChange > directionChangeInterval)
+        {
+            currentMoveDir = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+            currentLookDelta = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+            //currentLookDelta = new Vector2(Random.Range(-1f, 1f), Random.Range(-lookVerticalBound, lookVerticalBound));
+            timeSinceChange = 0f;
+        }
+#endif
+
+        updateLook(currentLookDelta);
+        updateMovement(currentMoveDir);
         updateGravity();
-        // Move the player forward and backward
-        //float move = Input.GetAxis("Vertical") * Time.deltaTime * 5f;
-        //transform.Translate(0, 0, move);
-
-        //// Strafe left and right
-        //float strafe = Input.GetAxis("Horizontal") * Time.deltaTime * 5f;
-        //transform.Translate(strafe, 0, 0);
-
-        // Jumping
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //{
-        //    GetComponent<Rigidbody>().AddForce(Vector3.up * 5f, ForceMode.Impulse);
-        //}
     }
 
     void updateGravity()
     {
-        //if (controller.isGrounded)
-        //{
-        //    velocity.y = 0f; // Reset vertical velocity when grounded
-        //}
-        //else
-        //{
-        //    velocity.y -= 9.81f * mass * Time.deltaTime; // Apply gravity
-        //}
-        //controller.Move(velocity * Time.deltaTime); // Apply the calculated velocity
         var gravity = Physics.gravity * mass * Time.deltaTime; // Get the gravity vector scaled by mass
         zVel.y = controller.isGrounded ? -1f : zVel.y + gravity.y; // Apply gravity
     }
-    void updateMovement()
+    void updateLook(Vector2 delta)
     {
+        look.x += delta.x * mouseSensitivity;
+        look.y += delta.y * mouseSensitivity;
+
 #if MANUAL_CONTROL
-        var x = Input.GetAxis("Horizontal");
-        var y = Input.GetAxis("Vertical");
-
+        look.y = Mathf.Clamp(look.y, -90f, 90f);    // Clamp vertical look to prevent flipping
 #else
-        var x = Random.Range(-1.0f, 1.0f);
-        var y = Random.Range(-1.0f, 1.0f);
-
+        // For random movement, we set the vertical look to a fixed value
+        //look.y = delta.y;    // Clamp vertical look (in this case for testing purposes)
+        look.y = Mathf.Clamp(look.y, -lookVerticalBound, lookVerticalBound);    // Clamp vertical look to prevent flipping
+        Debug.Log($"Look Y: {look.y}");    // Log the vertical look value for debugging
 #endif
-
-        //var input = new Vector3(x, 0, y).normalized;
-        var input = new Vector3();
-        input += transform.right * x; // Right/Left movement
-        input += transform.forward * y; // Forward/Backward movement
-        input.Normalize(); // Normalize to prevent faster diagonal movement
-                           //transform.Translate(input * movementSpeed * Time.deltaTime, Space.World);
-
-        controller.Move((input * movementSpeed + zVel) * Time.deltaTime);
-    }
-
-    void updateLook()
-    {
-#if MANUAL_CONTROL
-        look.x += Input.GetAxis("Mouse X") * mouseSensitivity;
-        look.y += Input.GetAxis("Mouse Y") * mouseSensitivity;
-        Mathf.Clamp(look.y, -90f, 90f); // Clamp vertical look to prevent flipping
-
-#else
-        look.x += Random.Range(-1.0f, 1.0f) * mouseSensitivity;
-        look.y += Random.Range(-1.0f, 1.0f) * mouseSensitivity;
-        Mathf.Clamp(look.y, -45f, 45f); // Clamp vertical look (in this case for testing purposes)
-
-#endif
-        Debug.Log(look);
 
         cameraTransform.localRotation = Quaternion.Euler(-look.y, 0f, 0f);
         transform.localRotation = Quaternion.Euler(0f, look.x, 0f);
+    }
+    void updateMovement(Vector2 moveInput)
+    {
+        var input = transform.right * moveInput.x + transform.forward * moveInput.y;
+        input.Normalize();
+        controller.Move((input * movementSpeed + zVel) * Time.deltaTime);
     }
 }

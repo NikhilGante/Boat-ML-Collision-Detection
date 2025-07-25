@@ -1,4 +1,4 @@
-//#define MANUAL_CONTROL
+#define MANUAL_CONTROL
 using UnityEngine;
 
 public class player_script : MonoBehaviour
@@ -76,18 +76,13 @@ public class player_script : MonoBehaviour
     }
     void updateLook(Vector2 delta)
     {
+#if MANUAL_CONTROL
         look.x += delta.x * mouseSensitivity;
         look.y += delta.y * mouseSensitivity;
-
-#if MANUAL_CONTROL
         look.y = Mathf.Clamp(look.y, -90f, 90f);    // Clamp vertical look to prevent flipping
 #else
-        // For random movement, we set the vertical look to a fixed value
-        //look.y = delta.y;    // Clamp vertical look (in this case for testing purposes)
-        look.x = Mathf.Clamp(look.x, -currentLookTarget.x, currentLookTarget.x);    // Clamp vertical look to prevent flipping
-        look.y = Mathf.Clamp(look.y, -currentLookTarget.y, currentLookTarget.y);    // Clamp vertical look to prevent flipping
-        //look.x = Mathf.MoveTowards(look.x, currentLookTarget.x, Mathf.Abs(currentLookDelta.x));
-        //look.y = Mathf.MoveTowards(look.y, currentLookTarget.y, Mathf.Abs(currentLookDelta.y));
+        look.x = Mathf.MoveTowards(look.x, currentLookTarget.x, Mathf.Abs(currentLookDelta.x));
+        look.y = Mathf.MoveTowards(look.y, currentLookTarget.y, Mathf.Abs(currentLookDelta.y));
         Debug.Log($"Look X: {look.x}, Y: {look.y}, target: {currentLookTarget}, time: {timeSinceChange}");    // Log the vertical look value for debugging
 #endif
 

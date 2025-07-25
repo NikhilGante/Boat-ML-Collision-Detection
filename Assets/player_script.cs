@@ -1,4 +1,4 @@
-//#define MANUAL_CONTROL
+#define MANUAL_CONTROL
 using UnityEngine;
 
 public class player_script : MonoBehaviour

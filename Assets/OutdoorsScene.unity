@@ -1197,7 +1197,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mouseSensitivity: 3
-  movementSpeed: 50
+  movementSpeed: 5
   mass: 1
   cameraTransform: {fileID: 1823688467}
 --- !u!143 &2061852898

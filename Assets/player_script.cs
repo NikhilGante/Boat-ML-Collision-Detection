@@ -1,8 +1,10 @@
-//#define MANUAL_CONTROL
+#define MANUAL_CONTROL
 using UnityEngine;
 
 public class player_script : MonoBehaviour
 {
+    // Player movement and look settings
+    [SerializeField] bool manualControl = false;    // Toggle for manual control mode
     [SerializeField] float mouseSensitivity = 3f;
     [SerializeField] float movementSpeed = 20f;
     [SerializeField] float mass = 1f;
@@ -40,28 +42,28 @@ public class player_script : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-#if MANUAL_CONTROL
-        currentMoveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        currentLookDelta = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-
-#else
-        timeSinceChange += Time.deltaTime;
-        if (timeSinceChange >= directionChangeInterval)
-        {
-            currentMoveDir = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
-
-            // Fixed vertical look (target) to a random value within bounds
-            currentLookTarget = new Vector2(look.x + Random.Range(-180f, 180f), Random.Range(-lookVerticalBound, lookVerticalBound));
-
-            // Calculate the minimum change rate based on the target and time interval
-            Vector2 minlookChangeRate = new Vector2(currentLookTarget.x - look.x, currentLookTarget.y - look.y);
-            minlookChangeRate *= Time.deltaTime / directionChangeInterval;    
-            
-            // Look delta is a rand value within the range of minlookChangeRate to 2x the rate so the player moves straight for some time
-            currentLookDelta = new Vector2(Random.Range(1f, 2f) * minlookChangeRate.x, Random.Range(1f, 2f) * minlookChangeRate.y);
-            timeSinceChange = 0f;
+        if (manualControl) {
+            currentMoveDir = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+            currentLookDelta = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
         }
-#endif
+        else {
+            timeSinceChange += Time.deltaTime;
+            if (timeSinceChange >= directionChangeInterval)
+            {
+                currentMoveDir = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+
+                // Fixed vertical look (target) to a random value within bounds
+                currentLookTarget = new Vector2(look.x + Random.Range(-180f, 180f), Random.Range(-lookVerticalBound, lookVerticalBound));
+
+                // Calculate the minimum change rate based on the target and time interval
+                Vector2 minlookChangeRate = new Vector2(currentLookTarget.x - look.x, currentLookTarget.y - look.y);
+                minlookChangeRate *= Time.deltaTime / directionChangeInterval;
+
+                // Look delta is a rand value within the range of minlookChangeRate to 2x the rate so the player moves straight for some time
+                currentLookDelta = new Vector2(Random.Range(1f, 2f) * minlookChangeRate.x, Random.Range(1f, 2f) * minlookChangeRate.y);
+                timeSinceChange = 0f;
+            }
+        }
 
         updateLook(currentLookDelta);
         updateMovement(currentMoveDir);
@@ -75,15 +77,16 @@ public class player_script : MonoBehaviour
     }
     void updateLook(Vector2 delta)
     {
-#if MANUAL_CONTROL
-        look.x += delta.x * mouseSensitivity;
-        look.y += delta.y * mouseSensitivity;
-        look.y = Mathf.Clamp(look.y, -90f, 90f);    // Clamp vertical look to prevent flipping
-#else
-        look.x = Mathf.MoveTowards(look.x, currentLookTarget.x, Mathf.Abs(currentLookDelta.x));
-        look.y = Mathf.MoveTowards(look.y, currentLookTarget.y, Mathf.Abs(currentLookDelta.y));
-        //Debug.Log($"Look X: {look.x}, Y: {look.y}, target: {currentLookTarget}, time: {timeSinceChange}");    // Log the vertical look value for debugging
-#endif
+        if (manualControl) {
+            look.x += delta.x * mouseSensitivity;
+            look.y += delta.y * mouseSensitivity;
+            look.y = Mathf.Clamp(look.y, -90f, 90f);    // Clamp vertical look to prevent flipping
+        }
+        else {
+            look.x = Mathf.MoveTowards(look.x, currentLookTarget.x, Mathf.Abs(currentLookDelta.x));
+            look.y = Mathf.MoveTowards(look.y, currentLookTarget.y, Mathf.Abs(currentLookDelta.y));
+            //Debug.Log($"Look X: {look.x}, Y: {look.y}, target: {currentLookTarget}, time: {timeSinceChange}");    // Log the vertical look value for debugging
+        }
 
         cameraTransform.localRotation = Quaternion.Euler(-look.y, 0f, 0f);
         transform.localRotation = Quaternion.Euler(0f, look.x, 0f);
@@ -99,10 +102,9 @@ public class player_script : MonoBehaviour
             Debug.Log($"Hit radius! time: {timeSinceChange}");    // Log the vertical look value for debugging
 
             Vector3 directionToLakeCentre = (lakeCentre - transform.position).normalized;
-            //input = directionToLakeCentre * moveInput.magnitude; // Adjust input to move towards the lake centre
+
             // Smoothly adjust the input towards the lake centre
             input = Vector3.Lerp(input, directionToLakeCentre * moveInput.magnitude, 0.5f);
-
         }
         controller.Move((input * movementSpeed + zVel) * Time.deltaTime);
     }

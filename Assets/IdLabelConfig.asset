@@ -19,5 +19,32 @@ MonoBehaviour:
   - label: capsule_label
     id: 2
     hierarchyRelation: 0
+  - label: Wood_Boat_label
+    id: 3
+    hierarchyRelation: 0
+  - label: Kayak_label
+    id: 4
+    hierarchyRelation: 0
+  - label: Paddle_label
+    id: 5
+    hierarchyRelation: 0
+  - label: Paddle
+    id: 6
+    hierarchyRelation: 0
+  - label: KayakV2
+    id: 7
+    hierarchyRelation: 0
+  - label: Speed_Boat
+    id: 8
+    hierarchyRelation: 0
+  - label: Scout_Boat
+    id: 9
+    hierarchyRelation: 0
+  - label: Wood_BoatV1
+    id: 10
+    hierarchyRelation: 0
+  - label: Fisher_Boat
+    id: 11
+    hierarchyRelation: 0
   autoAssignIds: 1
   startingLabelId: 1

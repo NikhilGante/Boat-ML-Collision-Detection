@@ -621,7 +621,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: b990e7958191eca4e89757b013d69fee,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.020448828
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b990e7958191eca4e89757b013d69fee,
         type: 3}
@@ -1187,7 +1187,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: e5842254fae9a5f42995d916c9509a72,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.13872334
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e5842254fae9a5f42995d916c9509a72,
         type: 3}
@@ -1207,12 +1207,12 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: e5842254fae9a5f42995d916c9509a72,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e5842254fae9a5f42995d916c9509a72,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e5842254fae9a5f42995d916c9509a72,
         type: 3}
@@ -1722,7 +1722,7 @@ MonoBehaviour:
   constants:
     randomSeed: 539662031
     startIteration: 0
-    iterationCount: 1000
+    iterationCount: 2000
     totalIterations: 100
     instanceCount: 1
     instanceIndex: 0
@@ -1789,18 +1789,18 @@ MonoBehaviour:
         prefabs:
           collapsed: 0
           probabilities:
-          - 0.07692308
-          - 0.07692308
-          - 0.07692308
-          - 0.07692308
-          - 0.07692308
-          - 0.07692308
-          - 0.07692308
-          - 0.07692308
-          - 0.07692308
-          - 0.07692308
-          - 0.07692308
-          - 0.07692308
+          - 0.083333336
+          - 0.083333336
+          - 0.083333336
+          - 0.083333336
+          - 0.083333336
+          - 0.083333336
+          - 0.083333336
+          - 0.083333336
+          - 0.083333336
+          - 0.083333336
+          - 0.083333336
+          - 0.083333336
           uniform: 1
           m_Categories:
           - {fileID: 919132149155446097, guid: 17fba420b298c554a9c20e1a8f31e827, type: 3}
@@ -2128,10 +2128,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   manualControl: 0
   mouseSensitivity: 3
-  movementSpeed: 15
+  movementSpeed: 50
   mass: 1
   cameraTransform: {fileID: 1823688467}
-  directionChangeInterval: 5
+  directionChangeInterval: 2
   lookVerticalBound: 10
   lakeRadius: 100
 --- !u!143 &2061852898

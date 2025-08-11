@@ -6,7 +6,7 @@ public class player_script : MonoBehaviour
     // Player movement and look settings
     [SerializeField] bool manualControl = false;    // Toggle for manual control mode
     [SerializeField] float mouseSensitivity = 3f;
-    [SerializeField] float movementSpeed = 20f;
+    [SerializeField] float movementSpeed = 50f;
     [SerializeField] float mass = 1f;
     [SerializeField] Transform cameraTransform;
 

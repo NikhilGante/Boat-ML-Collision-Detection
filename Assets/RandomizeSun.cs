@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class RandomizeSun : MonoBehaviour
 {
-    public float minIntensity = 0.5f;
+    public float minIntensity = 1.0f;
     public float maxIntensity = 1.5f;
     public float changeInterval = 1f; // seconds between randomizations
 
@@ -21,7 +21,7 @@ public class RandomizeSun : MonoBehaviour
     void RandomizeLighting()
     {
         Vector3 euler = new Vector3(
-            Random.Range(15f, 75f), // elevation
+            Random.Range(50f, 75f), // elevation
             Random.Range(0f, 360f), // azimuth
             0f
         );

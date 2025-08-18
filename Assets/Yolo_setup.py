@@ -6,7 +6,7 @@ from glob import glob
 # -------------------------
 # CONFIG - set your path
 # -------------------------
-root_dir = r"C:\Users\odyse\AppData\LocalLow\DefaultCompany\Lake (HDRP)\solo_17"
+root_dir = r"C:\Users\odyse\AppData\LocalLow\DefaultCompany\Lake (HDRP)\solo_1"
 images_dir = os.path.join(root_dir, "images")
 labels_dir = os.path.join(root_dir, "labels")
 classes_path = os.path.join(root_dir, "classes.txt")

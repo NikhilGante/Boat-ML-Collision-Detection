@@ -1,32 +1,44 @@
 using UnityEngine;
+using System.Collections;
 
-public class RandomizeSun : MonoBehaviour
+public class SunRandomizer : MonoBehaviour
 {
-    public float minIntensity = 1.0f;
-    public float maxIntensity = 1.5f;
-    public float changeInterval = 1f; // seconds between randomizations
+    public float interval = 5f; // seconds between updates
+    private Light sunLight;
 
-    private float timer = 0f;
-
-    void Update()
+    void Start()
     {
-        timer += Time.deltaTime;
-        if (timer >= changeInterval)
+        sunLight = GetComponent<Light>();
+        if (sunLight != null && sunLight.type == LightType.Directional)
         {
-            RandomizeLighting();
-            timer = 0f;
+            StartCoroutine(RandomizeSunRoutine());
         }
     }
 
-    void RandomizeLighting()
+    IEnumerator RandomizeSunRoutine()
     {
-        Vector3 euler = new Vector3(
-            Random.Range(50f, 75f), // elevation
-            Random.Range(0f, 360f), // azimuth
-            0f
-        );
-        transform.rotation = Quaternion.Euler(euler);
+        while (true)
+        {
+            RandomizeSun();
+            yield return new WaitForSeconds(interval);
+        }
+    }
 
-        GetComponent<Light>().intensity = Random.Range(minIntensity, maxIntensity);
+    void RandomizeSun()
+    {
+        // Random rotation
+        float yaw = Random.Range(0f, 360f);     // Spin around Y axis
+        float pitch = Random.Range(30f, 60f);   // Keep above horizon
+        transform.rotation = Quaternion.Euler(pitch, yaw, 0);
+
+        // Random intensity
+        sunLight.intensity = Random.Range(0.8f, 1.5f);
+
+        // Random color (warm to cool daylight)
+        sunLight.color = Color.Lerp(
+            new Color(1f, 0.95f, 0.85f),   // warm
+            new Color(0.9f, 0.95f, 1f),    // cool
+            Random.value
+        );
     }
 }

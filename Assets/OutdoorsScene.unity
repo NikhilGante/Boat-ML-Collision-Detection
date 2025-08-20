@@ -217,6 +217,7 @@ GameObject:
   - component: {fileID: 157207113}
   - component: {fileID: 157207115}
   - component: {fileID: 157207116}
+  - component: {fileID: 157207117}
   m_Layer: 0
   m_Name: Sun
   m_TagString: Untagged
@@ -430,7 +431,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 157207112}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ba4354e71f5c4dd4db63cfcd4b0dbb2f, type: 3}
   m_Name: 
@@ -438,6 +439,19 @@ MonoBehaviour:
   minIntensity: 1
   maxIntensity: 1.5
   changeInterval: 1
+  timer: 0
+--- !u!114 &157207117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 157207112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db00808ab9d04579b81b7f0dbd67b90f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &282462519
 GameObject:
   m_ObjectHideFlags: 0
@@ -450,13 +464,14 @@ GameObject:
   - component: {fileID: 282462521}
   - component: {fileID: 282462520}
   - component: {fileID: 282462523}
+  - component: {fileID: 282462524}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &282462520
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -671,6 +686,19 @@ MonoBehaviour:
   minIntensity: 0.5
   maxIntensity: 1.5
   changeInterval: 1
+  timer: 0
+--- !u!114 &282462524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 282462519}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db00808ab9d04579b81b7f0dbd67b90f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &432432459
 GameObject:
   m_ObjectHideFlags: 0
@@ -1881,7 +1909,7 @@ MonoBehaviour:
       type: {class: BoundingBox2DLabeler, ns: UnityEngine.Perception.GroundTruth.Labelers,
         asm: Unity.Perception.Runtime}
       data:
-        enabled: 1
+        enabled: 0
         annotationId: bounding box
         idLabelConfig: {fileID: 11400000, guid: 0a6d54d40b4b3e042aa43600a7995344,
           type: 2}
@@ -1965,6 +1993,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Randomizers:
+  - rid: 1809721795717890048
   - rid: 5507277370648690692
   - rid: 5507277370648690688
   configuration: {fileID: 0}
@@ -1980,12 +2009,61 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 1809721795717890048
+      type: {class: SunAngleRandomizer, ns: UnityEngine.Perception.Randomization.Randomizers,
+        asm: Unity.Perception.Runtime}
+      data:
+        m_Enabled: 1
+        collapsed: 0
+        <enabledStateCanBeSwitchedByUser>k__BackingField: 1
+        hour:
+          collapsed: 0
+          value:
+            rid: 1809721795717890049
+        dayOfTheYear:
+          collapsed: 0
+          value:
+            rid: 1809721795717890050
+        latitude:
+          collapsed: 0
+          value:
+            rid: 1809721795717890051
+    - rid: 1809721795717890049
+      type: {class: UniformSampler, ns: UnityEngine.Perception.Randomization.Samplers,
+        asm: Unity.Perception.Runtime}
+      data:
+        range:
+          minimum: 6
+          maximum: 18
+        <minAllowed>k__BackingField: 0
+        <maxAllowed>k__BackingField: 0
+        <shouldCheckValidRange>k__BackingField: 0
+    - rid: 1809721795717890050
+      type: {class: UniformSampler, ns: UnityEngine.Perception.Randomization.Samplers,
+        asm: Unity.Perception.Runtime}
+      data:
+        range:
+          minimum: 0
+          maximum: 364
+        <minAllowed>k__BackingField: 0
+        <maxAllowed>k__BackingField: 0
+        <shouldCheckValidRange>k__BackingField: 0
+    - rid: 1809721795717890051
+      type: {class: UniformSampler, ns: UnityEngine.Perception.Randomization.Samplers,
+        asm: Unity.Perception.Runtime}
+      data:
+        range:
+          minimum: -60
+          maximum: 60
+        <minAllowed>k__BackingField: 0
+        <maxAllowed>k__BackingField: 0
+        <shouldCheckValidRange>k__BackingField: 0
     - rid: 5507277370648690688
       type: {class: RotationRandomizer, ns: UnityEngine.Perception.Randomization.Randomizers,
         asm: Unity.Perception.Runtime}
       data:
         m_Enabled: 1
-        collapsed: 0
+        collapsed: 1
         <enabledStateCanBeSwitchedByUser>k__BackingField: 1
         rotation:
           collapsed: 0
@@ -2030,7 +2108,7 @@ MonoBehaviour:
         asm: Unity.Perception.Runtime}
       data:
         m_Enabled: 1
-        collapsed: 0
+        collapsed: 1
         <enabledStateCanBeSwitchedByUser>k__BackingField: 1
         depth: 0
         separationDistance: 2
@@ -2375,7 +2453,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c2be2b4beb8a084d98b0f61b7a88ed6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  manualControl: 0
+  manualControl: 1
   mouseSensitivity: 3
   movementSpeed: 50
   mass: 1
